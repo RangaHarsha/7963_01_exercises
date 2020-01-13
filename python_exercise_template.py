@@ -4,6 +4,7 @@ import numpy as np
 # Create the required data frames by reading in the files
 df_s = pd.read_excel('SaleData.xlsx')
 df_i = pd.read_csv('imdb.csv',escapechar = "\\")
+df_m = pd.read_csv('movie_metadata.csv')
 df_d = pd.read_csv('diamonds.csv')
 
 
@@ -52,8 +53,8 @@ def fifth_movie(df):
 # Q8 return titles of movies with shortest and longest run time
 def movies(df):
 	title = []
-	title.append(df[df['duration'] == df['duration'].max()]['title'].values)
-	title.append(df[df['duration'] == df['duration'].min()]['title'].values)
+	title.append(df[df['duration'] == df['duration'].max()]['movie_title'].values)
+	title.append(df[df['duration'] == df['duration'].min()]['movie_title'].values)
 	return title
 
 # Q9 sort by two columns - release_date (earliest) and Imdb rating(highest to lowest)
@@ -63,7 +64,7 @@ def sort_df(df):
 
 # Q10 subset revenue more than 2 million and spent less than 1 million & duration between 30 mintues to 180 minutes
 def subset_df(df):
-	ls = df[(df['revenue'] > 2000000) & (df['budget'] < 1000000) & (df['duration'] >= 30*60) & (df['duration'] <= 180*60)]
+	ls = df[(df['gross'] > 2000000) & (df['budget'] < 1000000) & (df['duration'] >= 30) & (df['duration'] <= 180)]
 	return ls
 
 # Q11 count the duplicate rows of diamonds DataFrame.
