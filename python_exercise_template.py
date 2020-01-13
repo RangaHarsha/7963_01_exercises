@@ -47,7 +47,7 @@ def sales_pct(df):
 
 # Q7 get imdb rating for fifth movie of dataframe
 def fifth_movie(df):
-	ls = df.loc[4,'imdbRating']
+	ls = df.loc[4,'imdb_score']
 	return ls
 
 # Q8 return titles of movies with shortest and longest run time
@@ -59,7 +59,7 @@ def movies(df):
 
 # Q9 sort by two columns - release_date (earliest) and Imdb rating(highest to lowest)
 def sort_df(df):
-	ls = df.sort_values(['year', 'imdbRating'], ascending=[True, False])
+	ls = df.sort_values(['title_year', 'imdb_score'], ascending=[True, False])
 	return ls
 
 # Q10 subset revenue more than 2 million and spent less than 1 million & duration between 30 mintues to 180 minutes
@@ -117,5 +117,41 @@ def impute(df):
 #print(sub_numeric(df_d))
 #print(volume(df_d))
 #print(impute(df_d))
+
+def bonus_1(df):
+    df['Genre_combo'] = df[df.columns[16:]].T.apply(lambda x : "|".join(x.index[x==1]),axis=0)
+    df=df.groupby(["type","year","Genre_combo"]).agg(avg_rating = ("imdbRating","mean"),
+                                                  min_rating = ("imdbRating","min"),
+                                                  max_rating = ("imdbRating","max"),
+                                                  total_run_time_mins = ("duration",np.sum))
+    return df
+
+def bonus_2(df):
+    #Relation
+    df['length'].corr(df['imdbRating'])
+    #Quantiles
+    df['Quantile']=pd.qcut(df['length'], 4, labels=False)
+    df2=pd.crosstab(df.year,df.Quantile).rename(columns={0:"num_videos_less_than25Percentile",
+                                                         1:"num_videos_25_50Percentile",
+                                                         2:"num_videos_50_75Percentile",
+                                                         3:"num_videos_greaterthan75Precentile"})
+    df2['min_length'] = df.groupby(["year"])["length"].min()
+    df2['max_length'] = df.groupby(["year"])["length"].max()
+    return df2
+
+def bonus_3(df):
+    df['bins'] = pd.qcut(df['volume'],4)
+    df2 = pd.crosstab(df.bins,df.cut).apply(lambda r: r/r.sum(), axis=1)
+    return df2
+
+def bonus_4(df):
+    df.groupby(['year'])['imdbRating'].mean()
+
+def bonus_5(df):
+    df['bins'] = pd.qcut(df['duration'],10)
+    df2 = df.groupby(['bins']).agg(nominations = ("nrOfNominations","sum"),
+                               wins = ("nrOfWins","sum"))
+    return df2
+
 
 
