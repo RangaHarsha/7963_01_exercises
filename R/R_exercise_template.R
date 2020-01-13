@@ -61,7 +61,7 @@ sales_pct <- function(df){
   
 # Q7 get imdb rating for fifth movie of dataframe
 fifth_movie <- function(df){
-  res <- df[5,] %>% select(imdbRating)
+  res <- df[5,] %>% select(imdb_score)
   return(res)
   
 }
@@ -75,7 +75,7 @@ movies <- function(df){
 
 # Q9 sort by two columns - release_date (earliest) and Imdb rating(highest to lowest)
 sort_df <- function(df){
-  sd <- arrange(df,year,desc(imdbRating))
+  sd <- arrange(df,title_year,desc(imdb_score))
   return(sd)
   
 }
