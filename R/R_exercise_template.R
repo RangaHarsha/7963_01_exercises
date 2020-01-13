@@ -68,8 +68,8 @@ fifth_movie <- function(df){
 
 # Q8 return titles of movies with shortest and longest run time
 movies <- function(df){
-  tit <- df %>% filter(duration == max(as.numeric(as.character(df$duration)),na.rm = TRUE)) %>% select(title)
-  rbind(tit,df %>% filter(duration == min(as.numeric(as.character(df$duration)),na.rm = TRUE)) %>% select(title))
+  tit <- df %>% filter(duration == max(as.numeric(as.character(df$duration)),na.rm = TRUE)) %>% select(movie_title)
+  rbind(tit,df %>% filter(duration == min(as.numeric(as.character(df$duration)),na.rm = TRUE)) %>% select(movie_title))
   return(tit)
 }
 
@@ -82,7 +82,7 @@ sort_df <- function(df){
 
 # Q10 subset revenue more than 2 million and spent less than 1 million & duration between 30 mintues to 180 minutes
 subset_df <- function(df){
-  sd <- filter(df,revenue > 2000000,budget < 1000000,duration >= 30*60,duration <= 180*60)
+  sd <- filter(df,gross > 2000000,budget < 1000000,duration >= 30,duration <= 180)
   return(sd)
   
 }
