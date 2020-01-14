@@ -166,8 +166,28 @@ def bonus_5(df):
     df2['total_count'] = df.groupby(['bins'])['year'].count()
     return df2
 def bonus_6(df1,df2):
-    df1.shape
-    df1.dtypes
+    print(df2.shape)
+    print(df2.dtypes)
+    df = df2
+    #DB information
+    df.info()
+    #histogram
+    print(df['duration'].plot(kind = 'hist',bins = 10))
+    #boxplot
+    print(df['duration'].plot(kind = 'box'))
+    #number of movies with each content rating
+    df_c = df[['content_rating','movie_title']].groupby('content_rating')['movie_title'].count().rename("title_count").reset_index()
+    print(df_c)
+    #Content Rating Visualization
+    plt.bar(df_c['content_rating'],df_c['title_count'])
+    plt.xlabel('Content Rating')
+    plt.ylabel('Title Count')
+    plt.title('Content Rating Visualization')
+    plt.show()
+    #Top IMDB Rating for each Genre Combination
+    print(df.sort_values('imdb_score', ascending=False).groupby('genres')['movie_title','imdb_score'].first())
+    #Relationship between ImdbScore and Duration
+    print(df.boxplot(column='duration', by='imdb_score'))
     return 0
 
 #bonus_1(df_i)
