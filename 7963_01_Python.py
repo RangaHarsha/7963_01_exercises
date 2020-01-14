@@ -1,5 +1,9 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
+from mpl_toolkits import 
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set()
 
 # Create the required data frames by reading in the files
 df_s = pd.read_excel('SaleData.xlsx')
@@ -138,7 +142,17 @@ def bonus_2(df):
     return df2
 
 def bonus_3(df):
-    df['bins'] = pd.qcut(df['volume'],4)
+    vol = []
+    for i in range(len(df)):
+        if(df['depth'][i] > 60):
+            if(df['z'][i] == 'None'):
+                vol.append(np.nan)
+            else:
+                vol.append(float(df['x'][i])*float(df['y'][i])*float(df['z'][i]))
+        else:
+            vol.append(8)
+    df['volume'] = vol
+    df['bins'] = pd.qcut(df['volume'],4,labels = False)
     df2 = pd.crosstab(df.bins,df.cut).apply(lambda r: r/r.sum(), axis=1)
     return df2
 
@@ -146,7 +160,19 @@ def bonus_4(df):
     df.groupby(['year'])['imdbRating'].mean()
 
 def bonus_5(df):
-    df['bins'] = pd.qcut(df['duration'],10)
-    df2 = df.groupby(['bins']).agg(nominations = ("nrOfNominations","sum"),
-                               wins = ("nrOfWins","sum"))
+    df['bins'] = pd.qcut(df['duration'],10,abels = False)
+    df2 = df.groupby(['bins']).agg(total_nominations = ("nrOfNominations","sum"),
+                               total_wins = ("nrOfWins","sum"))
+    df2['total_count'] = df.groupby(['bins'])['year'].count()
     return df2
+def bonus_6(df1,df2):
+    df1.shape
+    df1.dtypes
+    return 0
+
+#bonus_1(df_i)
+#bonus_2(df_i)
+#bonus_3(df_d)
+#bonus_4(df_i)
+#bonus_5(df_i)
+#bonus_6(df_i,df_m)
