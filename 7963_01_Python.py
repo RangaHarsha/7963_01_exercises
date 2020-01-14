@@ -127,14 +127,12 @@ def bonus_1(df):
     return df
 
 def bonus_2(df):
+    df['length'] = df['title'].str.len()
     #Relation
     df['length'].corr(df['imdbRating'])
     #Quantiles
-    df['Quantile']=pd.qcut(df['length'], 4, labels=False)
-    df2=pd.crosstab(df.year,df.Quantile).rename(columns={0:"num_videos_less_than25Percentile",
-                                                         1:"num_videos_25_50Percentile",
-                                                         2:"num_videos_50_75Percentile",
-                                                         3:"num_videos_greaterthan75Precentile"})
+    df['Quantile']=pd.qcut(df['length'],q=[0, .25, .5, .75,1], labels=False)
+    df2 = pd.crosstab(df.year,df.Quantile).rename(columns={0:" num_videos_less_than25Percentile",1:" num_videos_25_50Percentile",2:"num_videos_50_75Percentile",3:"num_videos_greaterthan75Precentile"})
     df2['min_length'] = df.groupby(["year"])["length"].min()
     df2['max_length'] = df.groupby(["year"])["length"].max()
     return df2
@@ -152,6 +150,3 @@ def bonus_5(df):
     df2 = df.groupby(['bins']).agg(nominations = ("nrOfNominations","sum"),
                                wins = ("nrOfWins","sum"))
     return df2
-
-
-
