@@ -157,8 +157,9 @@ def bonus_3(df):
     return df2
 
 def bonus_4(df):
-    df.groupby(['year'])['imdbRating'].mean()
-
+    a = 0.1
+    gr = df.sort_values('gross',ascending=False).groupby('title_year').apply(lambda x : x.head(int(len(x) * a))).reset_index(drop = True)
+    gr.groupby('title_year')['imdb_score'].mean().rename('Avg_Imdb').reset_index()
 def bonus_5(df):
     df['bins'] = pd.qcut(df['duration'],10,abels = False)
     df2 = df.groupby(['bins']).agg(total_nominations = ("nrOfNominations","sum"),
