@@ -4,7 +4,8 @@ from mpl_toolkits import
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set()
-
+%matplotlib inline
+    
 # Create the required data frames by reading in the files
 df_s = pd.read_excel('SaleData.xlsx')
 df_i = pd.read_csv('imdb.csv',escapechar = "\\")
@@ -156,16 +157,40 @@ def bonus_3(df):
     df2 = pd.crosstab(df.bins,df.cut).apply(lambda r: r/r.sum(), axis=1)
     return df2
 
-def bonus_4(df):
-    a = 0.1
+def bonus_4(df_i,df_m):
+    df = df_m #movie_metadata
+    a = 0.1 #percent
     gr = df.sort_values('gross',ascending=False).groupby('title_year').apply(lambda x : x.head(int(len(x) * a))).reset_index(drop = True)
-    gr.groupby('title_year')['imdb_score'].mean().rename('Avg_Imdb').reset_index()
+    b4 = gr.groupby('title_year')['imdb_score'].mean().rename('Avg_Imdb').reset_index()
+    
+    df = df_i #imdb dataset
+    df1 = df['year'].reset_index()
+    df2 = df.loc[:,'Action':'Western'].reset_index()
+    df3 = pd.merge(df1,df2)
+    df3 = df3.drop(['index'], axis = 1)
+    df3 = df3.T
+    df3.columns = df3.iloc[0]
+    df3 = df3.drop(['year'],axis=0)
+    df3 = df3.T
+    
+    y_sum = df3.groupby('year').sum()
+    res = pd.merge(b4,y_sum,left_on='title_year', right_on='year')
+    
+    return res
+
+
 def bonus_5(df):
-    df['bins'] = pd.qcut(df['duration'],10,abels = False)
+    df['bins'] = pd.qcut(df['duration'],10,labels = False)
     df2 = df.groupby(['bins']).agg(total_nominations = ("nrOfNominations","sum"),
                                total_wins = ("nrOfWins","sum"))
     df2['total_count'] = df.groupby(['bins'])['year'].count()
+    tg = (df.groupby("bins")[df.loc[:,'Action':'Western'].columns.tolist()].sum()).T
+    tg_count = pd.DataFrame(tg.apply(lambda a: a.nlargest(3).index,axis=0).transpose(),)
+    tg_count.columns = ["First","Second","Third"]
+    df2['Top 3 Genres'] = tg_count["First"] + "," + tg_count["Second"] + "," + tg_count["Third"]
     return df2
+
+
 def bonus_6(df1,df2):
     print(df2.shape)
     print(df2.dtypes)
@@ -194,6 +219,6 @@ def bonus_6(df1,df2):
 #bonus_1(df_i)
 #bonus_2(df_i)
 #bonus_3(df_d)
-#bonus_4(df_i)
+#bonus_4(df_i,df_m)
 #bonus_5(df_i)
 #bonus_6(df_i,df_m)
