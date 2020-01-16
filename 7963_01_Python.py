@@ -25,9 +25,9 @@ def sales_year_region(df):
 	return syr
 
 # Q3 append column with no of days difference from present date to each order date
-from datetime import date
-def days_diff(df):
-	df['days_diff'] = pd.to_datetime(date.today()) - df['OrderDate']
+from datetime import datetime
+def days_diff(df,ref_date):
+	df['days_diff'] = pd.to_datetime(datetime.strptime(ref_date,'%d/%m/%Y').date()) - df['OrderDate']
 	return df
 
 # Q4 get dataframe with manager as first column and  salesman under them as lists in rows in second column.
@@ -123,7 +123,7 @@ def impute(df):
 #print(impute(df_d))
 
 def bonus_1(df):
-    df['Genre_combo'] = df[df.columns[16:]].T.apply(lambda x : "|".join(x.index[x==1]),axis=0)
+    df['Genre_combo'] = df.loc[:,'Action':'Western'].T.apply(lambda x : "|".join(x.index[x==1]),axis=0)
     df=df.groupby(["type","year","Genre_combo"]).agg(avg_rating = ("imdbRating","mean"),
                                                   min_rating = ("imdbRating","min"),
                                                   max_rating = ("imdbRating","max"),
@@ -131,7 +131,7 @@ def bonus_1(df):
     return df
 
 def bonus_2(df):
-    df['length'] = df['title'].str.len()
+    df['length'] = df['wordsInTitle'].str.len()
     #Relation
     df['length'].corr(df['imdbRating'])
     #Quantiles
