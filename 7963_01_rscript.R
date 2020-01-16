@@ -29,9 +29,11 @@ sales_year_region <- function(df){
 }
 
 # Q3 append column with no of days difference from present date to each order date
-days_diff <- function(df){
-  res <- mutate(df,days_diff = abs(Sys.Date() - as.Date(OrderDate)))
-  return(res)
+days_diff <- function(df,date){
+  ref_date <- as.Date(date, format = "%d/%m/%y")
+  #print(ref_date)
+  dd <- mutate(df,days_dif = abs(ref_date - as.Date(OrderDate)))
+  return(dd)
   
 }
 
