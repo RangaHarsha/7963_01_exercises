@@ -158,24 +158,23 @@ def bonus_3(df):
     return df2
 
 def bonus_4(df_i,df_m):
+    import math
     df = df_m #movie_metadata
-    a = 0.1 #percent
-    gr = df.sort_values('gross',ascending=False).groupby('title_year').apply(lambda x : x.head(int(len(x) * a))).reset_index(drop = True)
-    b4 = gr.groupby('title_year')['imdb_score'].mean().rename('Avg_Imdb').reset_index()
-    
-    df = df_i #imdb dataset
-    df1 = df['year'].reset_index()
-    df2 = df.loc[:,'Action':'Western'].reset_index()
-    df3 = pd.merge(df1,df2)
-    df3 = df3.drop(['index'], axis = 1)
-    df3 = df3.T
-    df3.columns = df3.iloc[0]
-    df3 = df3.drop(['year'],axis=0)
-    df3 = df3.T
-    
-    y_sum = df3.groupby('year').sum()
-    res = pd.merge(b4,y_sum,left_on='title_year', right_on='year')
-    
+    year = df['title_year'].unique()
+    df['url'] = df['movie_imdb_link'].apply(lambda x: x.split('?')[0])
+    b4 = pd.DataFrame()
+    a = 0.1
+    for i in year:
+        new = df[df['title_year'] == i]
+        gr = new.sort_values('gross',ascending=False).apply(lambda x : x.head(math.ceil(len(x) * a)))
+        b4 = b4.append(gr)
+    new = pd.merge(b4,df_i,on = 'url',how='left')
+    genres = new.loc[:,'Action':'Western'].columns.tolist()
+    res = new.groupby('title_year')[genres].sum()
+    res['Avg_Imdb'] = new.groupby('title_year')['imdb_score'].mean()
+    cols = res.columns.tolist()
+    cols = cols[-1:] + cols[:-1]
+    res = res[cols]
     return res
 
 
@@ -198,7 +197,7 @@ def bonus_6(df1,df2):
     #DB information
     df.info()
     #histogram
-    print(df['duration'].plot(kind = 'hist',bins = 10))
+    print(df['duration'].plot(k0ind = 'hist',bins = 10))
     #boxplot
     print(df['duration'].plot(kind = 'box'))
     #number of movies with each content rating
