@@ -154,7 +154,7 @@ def bonus_3(df):
             vol.append(8)
     df['volume'] = vol
     df['bins'] = pd.qcut(df['volume'],4,labels = False)
-    df2 = pd.crosstab(df.bins,df.cut).apply(lambda r: r/r.sum(), axis=1)
+    df2 = pd.crosstab(df.bins,df.cut,normalize = True,margins= True)*100
     return df2
 
 def bonus_4(df_i,df_m):
