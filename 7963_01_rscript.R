@@ -23,7 +23,7 @@ least_sales <- function(df){
 # Q2 compute total sales at each year X region
 sales_year_region <- function(df){
   dn <- mutate(df,year = as.numeric(format(OrderDate,'%Y')))
-  ts <- dn %>% group_by(year,Region) %>% summarise( total_sales = sum(Sale_amt,na.rm = TRUE))
+  ts <- dn %>% group_by( year, Region) %>% summarise( total_sales = sum(Sale_amt,na.rm = TRUE))
   return(ts)
   
 }
